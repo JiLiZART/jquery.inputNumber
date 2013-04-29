@@ -1,0 +1,46 @@
+.ranged-input {
+    position: relative;
+    width: 52px;
+    height: 21px;
+    margin-right: 10px;
+}
+
+.ranged-input a.up,.ranged-input a.down {
+    right: 0;
+    display: block;
+    position: absolute;
+    cursor: pointer;
+    width: 20px;
+    height: 9px;
+    background: url('input_num.png') 0 0 no-repeat;
+    border: 1px solid #cccccc;
+}
+
+.ranged-input a.up {
+    top: 0;
+}
+
+.ranged-input a.up:hover {
+    background-position: -20px 0;
+}
+
+.ranged-input a.down {
+    background-position: 0 -9px;
+    bottom: 0;
+}
+
+.ranged-input a.down:hover {
+    background-position: -20px -9px;
+}
+
+.ranged-input input {
+    position: absolute;
+    left: 1px;
+    top: 0;
+    width: 28px;
+    font-size: 12px;
+    line-height: 12px;
+    height: 13px;
+    border: 1px solid #b3b3b3;
+    padding: 3px;
+}

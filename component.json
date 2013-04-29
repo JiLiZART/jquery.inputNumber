@@ -1,0 +1,8 @@
+{
+  "name": "jquery.inputNumber",
+  "version": "0.1.0",
+  "main": ["./jquery.inputNumber.js"],
+  "dependencies": {
+    "jquery": ">=1.7"
+  }
+}
