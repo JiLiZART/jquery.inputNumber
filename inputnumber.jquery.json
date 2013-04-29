@@ -17,6 +17,7 @@
 	],
 	"homepage"		: "https://github.com/JiLiZART/jquery.inputNumber/",
 	"files"			: ["jquery.inputNumber.js"],
+	"demo"			: "http://jilizart.github.io/jquery.inputNumber/",
 	"dependencies"	: {
 		"jquery" : ">1.7.0"
 	},
