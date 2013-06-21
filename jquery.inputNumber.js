@@ -29,10 +29,10 @@
 
         init: function() {
             var opts = this.options;
-            this.$el.wrap($('<div />',{class:opts.wrapClass}));
+            this.$el.wrap($('<div />',{'class':opts.wrapClass}));
             this.$el.after(
-                $('<a />',{class:opts.upClass,title:opts.upTitle}),
-                $('<a />',{class:opts.downClass,title:opts.downTitle})
+                $('<a />',{'class':opts.upClass,title:opts.upTitle}),
+                $('<a />',{'class':opts.downClass,title:opts.downTitle})
             );
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
