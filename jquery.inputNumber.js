@@ -5,7 +5,7 @@
 (function($){
     "use strict";
 
-    var InputNumber = function(options,$el) {
+    var InputNumber = function(options, $el) {
         this.$el = $el;
         this.options = $.extend( {}, this.defaults, options );
         this.init();
@@ -13,26 +13,27 @@
 
     InputNumber.prototype = {
 
-        $el:null, // input element
-        $wrap:null, //div wrapper element
+        $el: null, // input element
+        $wrap: null, //div wrapper element
 
         options: null,
         defaults: {
-            negative:true,
-            positive:true,
-            wrapClass:'ranged-input',
-            upClass:'up',
-            upTitle:'Incrase',
-            downClass:'down',
-            downTitle:'Decrace'
+            negative: true,
+            positive: true,
+            wrapClass: 'ranged-input',
+            upClass: 'up',
+            upTitle: 'Incrase',
+            downClass: 'down',
+            downTitle: 'Decrace'
         },
 
         init: function() {
             var opts = this.options;
-            this.$el.wrap($('<div />',{'class':opts.wrapClass}));
+            
+            this.$el.wrap($('<div />', {'class':opts.wrapClass}));
             this.$el.after(
-                $('<a />',{'class':opts.upClass,title:opts.upTitle}),
-                $('<a />',{'class':opts.downClass,title:opts.downTitle})
+                $('<a />', {'class':opts.upClass, 'title':opts.upTitle}),
+                $('<a />', {'class':opts.downClass, 'title':opts.downTitle})
             );
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
@@ -101,7 +102,7 @@
     $.fn.inputNumber = function(options) {
 
         $(this).each(function(){
-            var number = new InputNumber(options,$(this));
+            var number = new InputNumber(options, $(this));
         });
 
     };
