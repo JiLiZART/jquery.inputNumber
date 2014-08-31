@@ -12,6 +12,10 @@
         this.init();
     };
 
+    var setValue = function(element, value) {
+        $(element).val(value).change();
+    };
+
     InputNumber.prototype = {
 
         el: null, // input element
@@ -31,7 +35,7 @@
 
         init: function() {
             var opts = this.options;
-            
+
             this.$el.wrap($('<div />', {'class':opts.wrapClass}));
             this.$el.after(
                 $('<a />', {'class':opts.upClass, 'title':opts.upTitle}),
@@ -78,14 +82,14 @@
 
                     if (! opts.negative) {
                         if (value >= 0) {
-                            e.currentTarget.value = value;
+                            setValue(e.currentTarget, value);
                         }
                     } else if (! opts.positive) {
                         if (value <= 0) {
-                            e.currentTarget.value = value;
+                            setValue(e.currentTarget, value);
                         }
                     } else {
-                        e.currentTarget.value = value;
+                        setValue(e.currentTarget, value);
                     }
                 });
         },
@@ -109,10 +113,10 @@
 
             if (! this.options.positive) {
                 if (value <= 0) {
-                    this.el.value = value;
+                    setValue(this.el, value);
                 }
             } else {
-                this.el.value = value;
+                setValue(this.el, value);
             }
         },
 
@@ -121,10 +125,10 @@
 
             if (! this.options.negative) {
                 if (value >= 0) {
-                    this.el.value = value;
+                    setValue(this.el, value);
                 }
             } else {
-                this.el.value = value;
+                setValue(this.el, value);
             }
         }
 
