@@ -38,8 +38,8 @@
 
             this.$el.wrap($('<div />', {'class':opts.wrapClass}));
             this.$el.after(
-                $('<a />', {'class':opts.upClass, 'title':opts.upTitle}),
-                $('<a />', {'class':opts.downClass, 'title':opts.downTitle})
+                $('<button />', {'class':opts.upClass, 'title':opts.upTitle}),
+                $('<button />', {'class':opts.downClass, 'title':opts.downTitle})
             );
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
@@ -52,11 +52,11 @@
                 self = this;
 
             this.$wrap
-                .delegate('a.' + opts.downClass, 'click', function(e) {
+                .delegate('button.' + opts.downClass, 'click', function(e) {
                     self.down();
                     e.preventDefault();
                 })
-                .delegate('a.' + opts.upClass, 'click', function(e) {
+                .delegate('button.' + opts.upClass, 'click', function(e) {
                     self.up();
                     e.preventDefault();
                 });
