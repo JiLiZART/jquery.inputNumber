@@ -12,8 +12,27 @@
         this.init();
     };
 
-    var setValue = function(element, value) {
-        $(element).val(value).change();
+    var initDisabledState = function($element, options) {
+        var value = parseInt($element.val());
+        if (isNaN(value)) {
+            value = 0;
+        }
+        $element.parent().find('.' + options.upClass).attr('disabled', !isNaN(options.max) && value >= options.max);
+        $element.parent().find('.' + options.downClass).attr('disabled', !isNaN(options.min) && value <= options.min);
+    };
+
+    var filterValue = function($element, options) {
+        var value = $element.val();
+
+        if (!isNaN(options.min) && value < options.min) {
+            $element.val(options.min);
+        }
+
+        if (!isNaN(options.max) && value > options.max) {
+            $element.val(options.max);
+        }
+
+        initDisabledState($element, options);
     };
 
     InputNumber.prototype = {
@@ -24,17 +43,27 @@
 
         options: null,
         defaults: {
-            'negative': true,
-            'positive': true,
             'wrapClass': 'ranged-input',
             'upClass': 'up',
             'upTitle': 'incrase',
             'downClass': 'down',
-            'downTitle': 'decrace'
+            'downTitle': 'decrace',
+            'min': NaN,
+            'max': NaN
         },
 
         init: function() {
             var opts = this.options;
+
+            var minValue = parseInt(this.el.min);
+            if (!isNaN(minValue)) {
+                this.options.min = minValue;
+            }
+
+            var maxValue = parseInt(this.el.max);
+            if (!isNaN(maxValue)) {
+                this.options.max = maxValue;
+            }
 
             this.$el.wrap($('<div />', {'class':opts.wrapClass}));
             this.$el.after(
@@ -44,6 +73,7 @@
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
             this.bindEvents();
+            initDisabledState(this.$el, opts);
         },
 
         bindEvents:function() {
@@ -64,10 +94,10 @@
             $el
                 .on('change', function(e) {
                     if (e.currentTarget.value === '') e.currentTarget.value = 0;
+                    filterValue($el, opts);
                 })
                 .on('keypress', function(e) {
                     var keyCode = window.event ? e.keyCode : e.which;
-
                     //codes for 0-9
                     if (keyCode < 48 || keyCode > 57) {
                         //codes for backspace, delete, enter
@@ -77,20 +107,7 @@
                     }
                 })
                 .bind('mousewheel', function(e, delta) {
-                    var defVal = self.defaultElValue(),
-                        value = defVal + delta;
-
-                    if (! opts.negative) {
-                        if (value >= 0) {
-                            setValue(e.currentTarget, value);
-                        }
-                    } else if (! opts.positive) {
-                        if (value <= 0) {
-                            setValue(e.currentTarget, value);
-                        }
-                    } else {
-                        setValue(e.currentTarget, value);
-                    }
+                    self.setValue(self.defaultElValue() + delta);
                 });
         },
 
@@ -110,28 +127,32 @@
 
         up: function() {
             var value = this.incrementElValue();
-
-            if (! this.options.positive) {
-                if (value <= 0) {
-                    setValue(this.el, value);
-                }
-            } else {
-                setValue(this.el, value);
-            }
+            this.setValue(value);
         },
 
         down: function() {
             var value = this.decrementElValue();
+            this.setValue(value);
+        },
+        setValue: function(value) {
+            value = parseInt(value);
 
-            if (! this.options.negative) {
-                if (value >= 0) {
-                    setValue(this.el, value);
-                }
-            } else {
-                setValue(this.el, value);
+            if (isNaN(value)) {
+                return false;
             }
-        }
 
+            if (!isNaN(this.options.min) && value < this.options.min) {
+                return false;
+            }
+
+            if (!isNaN(this.options.max) && value > this.options.max) {
+                return false;
+            }
+
+            this.$el.val(value).change();
+
+            return true;
+        }
     };
 
     $.fn.inputNumber = function(options) {
