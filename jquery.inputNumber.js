@@ -13,6 +13,7 @@
     };
 
     var initDisabledState = function($element, options) {
+        options = options || $element.data('inputNumber').options;
         var value = parseInt($element.val());
         if (isNaN(value)) {
             value = 0;
@@ -21,9 +22,9 @@
         $element.parent().find('.' + options.downClass).attr('disabled', !isNaN(options.min) && value <= options.min);
     };
 
-    var filterValue = function($element, options) {
+    var filterValue = function($element) {
         var value = $element.val();
-
+        var options = $element.data('inputNumber').options;
         if (!isNaN(options.min) && value < options.min) {
             $element.val(options.min);
         }
@@ -32,7 +33,7 @@
             $element.val(options.max);
         }
 
-        initDisabledState($element, options);
+        initDisabledState($element);
     };
 
     InputNumber.prototype = {
@@ -73,7 +74,7 @@
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
             this.bindEvents();
-            initDisabledState(this.$el, opts);
+            initDisabledState(this.$el, this.options);
         },
 
         bindEvents:function() {
@@ -94,7 +95,7 @@
             $el
                 .on('change', function(e) {
                     if (e.currentTarget.value === '') e.currentTarget.value = 0;
-                    filterValue($el, opts);
+                    filterValue($el);
                 })
                 .on('keypress', function(e) {
                     var keyCode = window.event ? e.keyCode : e.which;
@@ -152,6 +153,15 @@
             this.$el.val(value).change();
 
             return true;
+        },
+        remove: function() {
+            this.$el.removeData('inputNumber');
+            var container = this.$el.closest('.' + this.options.wrapClass);
+
+            container.removeClass(this.options.wrapClass)
+                .find('.' + this.options.upClass)
+                .add(container.find('.' + this.options.downClass))
+                .remove();
         }
     };
 
