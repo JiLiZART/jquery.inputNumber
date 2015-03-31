@@ -83,21 +83,21 @@
                 self = this;
 
             this.$wrap
-                .delegate('button.' + opts.downClass, 'click', function(e) {
+                .delegate('button.' + opts.downClass, 'click.inputNumber', function(e) {
                     self.down();
                     e.preventDefault();
                 })
-                .delegate('button.' + opts.upClass, 'click', function(e) {
+                .delegate('button.' + opts.upClass, 'click.inputNumber', function(e) {
                     self.up();
                     e.preventDefault();
                 });
 
             $el
-                .on('change', function(e) {
+                .on('change.inputNumber', function(e) {
                     if (e.currentTarget.value === '') e.currentTarget.value = 0;
                     filterValue($el);
                 })
-                .on('keypress', function(e) {
+                .on('keypress.inputNumber', function(e) {
                     var keyCode = window.event ? e.keyCode : e.which;
                     //codes for 0-9
                     if (keyCode < 48 || keyCode > 57) {
@@ -107,7 +107,7 @@
                         }
                     }
                 })
-                .bind('mousewheel', function(e, delta) {
+                .bind('mousewheel.inputNumber', function(e, delta) {
                     self.setValue(self.defaultElValue() + delta);
                 });
         },
@@ -156,11 +156,12 @@
         },
         remove: function() {
             this.$el.removeData('inputNumber');
-            var container = this.$el.closest('.' + this.options.wrapClass);
+            this.$wrap.undelegate('.inputNumber');
+            this.$el.off('.inputNumber');
 
-            container.removeClass(this.options.wrapClass)
+            this.$wrap.removeClass(this.options.wrapClass)
                 .find('.' + this.options.upClass)
-                .add(container.find('.' + this.options.downClass))
+                .add(this.$wrap.find('.' + this.options.downClass))
                 .remove();
         }
     };
