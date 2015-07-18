@@ -5,8 +5,8 @@
     margin-right: 10px;
 }
 
-.ranged-input a.up,
-.ranged-input a.down {
+.ranged-input button.up,
+.ranged-input button.down {
     right: 0;
     display: block;
     position: absolute;
@@ -19,20 +19,20 @@
     border: 1px solid #cccccc;
 }
 
-.ranged-input a.up {
+.ranged-input button.up {
     top: 0;
 }
 
-.ranged-input a.up:hover {
+.ranged-input button.up:hover {
     background-position: -20px 0;
 }
 
-.ranged-input a.down {
+.ranged-input button.down {
     background-position: 0 -9px;
     bottom: 0;
 }
 
-.ranged-input a.down:hover {
+.ranged-input button.down:hover {
     background-position: -20px -9px;
 }
 

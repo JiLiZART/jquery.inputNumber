@@ -12,6 +12,30 @@
         this.init();
     };
 
+    var initDisabledState = function($element, options) {
+        options = options || $element.data('inputNumber').options;
+        var value = parseInt($element.val());
+        if (isNaN(value)) {
+            value = 0;
+        }
+        $element.parent().find('.' + options.upClass).attr('disabled', !isNaN(options.max) && value >= options.max);
+        $element.parent().find('.' + options.downClass).attr('disabled', !isNaN(options.min) && value <= options.min);
+    };
+
+    var filterValue = function($element) {
+        var value = $element.val();
+        var options = $element.data('inputNumber').options;
+        if (!isNaN(options.min) && value < options.min) {
+            $element.val(options.min);
+        }
+
+        if (!isNaN(options.max) && value > options.max) {
+            $element.val(options.max);
+        }
+
+        initDisabledState($element);
+    };
+
     InputNumber.prototype = {
 
         el: null, // input element
@@ -20,26 +44,37 @@
 
         options: null,
         defaults: {
-            'negative': true,
-            'positive': true,
             'wrapClass': 'ranged-input',
             'upClass': 'up',
             'upTitle': 'incrase',
             'downClass': 'down',
-            'downTitle': 'decrace'
+            'downTitle': 'decrace',
+            'min': NaN,
+            'max': NaN
         },
 
         init: function() {
             var opts = this.options;
-            
+
+            var minValue = parseInt(this.el.min);
+            if (!isNaN(minValue)) {
+                this.options.min = minValue;
+            }
+
+            var maxValue = parseInt(this.el.max);
+            if (!isNaN(maxValue)) {
+                this.options.max = maxValue;
+            }
+
             this.$el.wrap($('<div />', {'class':opts.wrapClass}));
             this.$el.after(
-                $('<a />', {'class':opts.upClass, 'title':opts.upTitle}),
-                $('<a />', {'class':opts.downClass, 'title':opts.downTitle})
+                $('<button />', {'class':opts.upClass, 'title':opts.upTitle}),
+                $('<button />', {'class':opts.downClass, 'title':opts.downTitle})
             );
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
             this.bindEvents();
+            initDisabledState(this.$el, this.options);
         },
 
         bindEvents:function() {
@@ -48,22 +83,22 @@
                 self = this;
 
             this.$wrap
-                .delegate('a.' + opts.downClass, 'click', function(e) {
+                .delegate('button.' + opts.downClass, 'click.inputNumber', function(e) {
                     self.down();
                     e.preventDefault();
                 })
-                .delegate('a.' + opts.upClass, 'click', function(e) {
+                .delegate('button.' + opts.upClass, 'click.inputNumber', function(e) {
                     self.up();
                     e.preventDefault();
                 });
 
             $el
-                .on('change', function(e) {
+                .on('change.inputNumber', function(e) {
                     if (e.currentTarget.value === '') e.currentTarget.value = 0;
+                    filterValue($el);
                 })
-                .on('keypress', function(e) {
+                .on('keypress.inputNumber', function(e) {
                     var keyCode = window.event ? e.keyCode : e.which;
-
                     //codes for 0-9
                     if (keyCode < 48 || keyCode > 57) {
                         //codes for backspace, delete, enter
@@ -72,21 +107,8 @@
                         }
                     }
                 })
-                .bind('mousewheel', function(e, delta) {
-                    var defVal = self.defaultElValue(),
-                        value = defVal + delta;
-
-                    if (! opts.negative) {
-                        if (value >= 0) {
-                            e.currentTarget.value = value;
-                        }
-                    } else if (! opts.positive) {
-                        if (value <= 0) {
-                            e.currentTarget.value = value;
-                        }
-                    } else {
-                        e.currentTarget.value = value;
-                    }
+                .bind('mousewheel.inputNumber', function(e, delta) {
+                    self.setValue(self.defaultElValue() + delta);
                 });
         },
 
@@ -106,28 +128,42 @@
 
         up: function() {
             var value = this.incrementElValue();
-
-            if (! this.options.positive) {
-                if (value <= 0) {
-                    this.el.value = value;
-                }
-            } else {
-                this.el.value = value;
-            }
+            this.setValue(value);
         },
 
         down: function() {
             var value = this.decrementElValue();
+            this.setValue(value);
+        },
+        setValue: function(value) {
+            value = parseInt(value);
 
-            if (! this.options.negative) {
-                if (value >= 0) {
-                    this.el.value = value;
-                }
-            } else {
-                this.el.value = value;
+            if (isNaN(value)) {
+                return false;
             }
-        }
 
+            if (!isNaN(this.options.min) && value < this.options.min) {
+                return false;
+            }
+
+            if (!isNaN(this.options.max) && value > this.options.max) {
+                return false;
+            }
+
+            this.$el.val(value).change();
+
+            return true;
+        },
+        remove: function() {
+            this.$el.removeData('inputNumber');
+            this.$wrap.undelegate('.inputNumber');
+            this.$el.off('.inputNumber');
+
+            this.$wrap.removeClass(this.options.wrapClass)
+                .find('.' + this.options.upClass)
+                .add(this.$wrap.find('.' + this.options.downClass))
+                .remove();
+        }
     };
 
     $.fn.inputNumber = function(options) {
