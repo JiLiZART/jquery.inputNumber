@@ -23,10 +23,11 @@
             'negative': true,
             'positive': true,
             'wrapClass': 'ranged-input',
-            'upClass': 'up',
-            'upTitle': 'incrase',
-            'downClass': 'down',
-            'downTitle': 'decrace'
+            'inputClass': 'ranged-input__input',
+            'upClass': 'ranged-input__up',
+            'upTitle': 'Incrase',
+            'downClass': 'ranged-input__down',
+            'downTitle': 'Decrace'
         },
 
         init: function() {
@@ -37,6 +38,7 @@
                 $('<a />', {'class':opts.upClass, 'title':opts.upTitle}),
                 $('<a />', {'class':opts.downClass, 'title':opts.downTitle})
             );
+            this.$el.addClass(opts.inputClass);
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
             this.bindEvents();
