@@ -9,6 +9,8 @@ HTML5 like input number, but better
 
 ## Installation
 
+### Simple
+
 Include jQuery and `jquery.inputNumber.js` onto your page:
 
 ```html
@@ -32,6 +34,21 @@ $('input.num').inputNumber({
 	downClass:'down',
 	downTitle:'Decrace'
 });
+```
+
+### Npm
+
+```bash
+npm install jquery-inputnumber
+```
+
+```javascript
+
+import $ from 'jquery';
+import InputNumber from 'jquery-inputnumber';
+import 'jquery-inputnumber/inputNumber.css';
+
+$('input.num').inputNumber();
 ```
 
 ---

@@ -1,0 +1,39 @@
+{
+  "name": "jquery-inputnumber",
+  "version": "0.1.3",
+  "readme": "README.md",
+  "description": "Expand your default text input by number input features.",
+  "main": "jquery.inputNumber.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "peerDependencies": {
+    "jquery": ">=1.7"
+  },
+  "devDependencies": {
+    "jquery": "^1.9.0"
+  },
+  "keywords": [
+    "jquery",
+    "number",
+    "html5",
+    "decimal",
+    "enumerable",
+    "input",
+    "form",
+    "inputnumber",
+    "jquery-plugin",
+    "ecosystem:jquery"
+  ],
+  "homepage": "https://github.com/JiLiZART/jquery.inputNumber",
+  "authors": [
+    "Nikolay Kostyurin <jilizart@gmail.com>"
+  ],
+  "license": "ISC",
+  "files": [
+    "jquery.inputNumber.js",
+    "inputNumber.css",
+    "LICENSE.md",
+    "README.md"
+  ]
+}
