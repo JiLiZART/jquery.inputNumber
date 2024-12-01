@@ -34,6 +34,15 @@ jobs:
       - name: Verify the integrity of provenance attestations and registry signatures
         run: npm audit signatures
 
+      - name: Validate NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "NPM_TOKEN is not set"
+            exit 1
+          fi
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
