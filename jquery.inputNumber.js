@@ -45,6 +45,8 @@
         el: null, // input element
         $el: null, // input element
         $wrap: null, //div wrapper element
+        $up: null,
+        $down: null,
 
         options: null,
         defaults: {
@@ -63,16 +65,18 @@
 
         init: function() {
             var opts = this.options;
+
+            this.$up = $('<button type="button" />', {'class':opts.upClass, 'title':opts.upTitle});
+            this.$down = $('<button type="button" />', {'class':opts.downClass, 'title':opts.downTitle});
             
             this.$el.wrap($('<div />', {'class':opts.wrapClass}));
-            this.$el.after(
-                $('<a />', {'class':opts.upClass, 'title':opts.upTitle}),
-                $('<a />', {'class':opts.downClass, 'title':opts.downTitle})
-            );
+            this.$el.after(this.$up, this.$down);
             this.$el.addClass(opts.inputClass);
             this.$wrap = this.$el.parent('.'+opts.wrapClass);
 
             this.bindEvents();
+
+            this.setValueTo(this.valueFrom(this.el), this.el);
         },
 
         bindEvents: function() {
@@ -81,28 +85,20 @@
                 self = this;
 
             this.$wrap
-                .delegate('a.' + opts.downClass, 'click', function(e) {
+                .delegate('button.' + opts.downClass, 'click', function(e) {
                     self.down();
                     e.preventDefault();
                 })
-                .delegate('a.' + opts.upClass, 'click', function(e) {
+                .delegate('button.' + opts.upClass, 'click', function(e) {
                     self.up();
                     e.preventDefault();
                 });
 
             $el
-                .on('change', function(e) {
-                    var intVal = self.parseValue(e.currentTarget.value);
-
-                    if (e.currentTarget.value === '' || isNaN(intVal)) {
-                        e.currentTarget.value = 0;
-                    }
-
-                    if (!isNaN(intVal)) {
-                        self.setValue(intVal, e.currentTarget);
-                    }
+                .on('change.inputNumber', function(e) {
+                    self.setValueTo(self.valueFrom(e.currentTarget), e.currentTarget);
                 })
-                .on('keypress', function(e) {
+                .on('keypress.inputNumber', function(e) {
                     var keyCode = window.event ? e.keyCode : e.which;
 
                     //codes for 0-9
@@ -113,20 +109,29 @@
                         }
                     }
                 })
-                .bind('mousewheel', function(e, delta) {
-                    var defVal = self.value(),
-                        value = defVal + delta;
-
-                    self.setValue(self.parseValue(value), e.currentTarget);
+                .bind('mousewheel.inputNumber', function(e, delta) {
+                    self.setValueTo(self.parseValue(self.valueFrom(e.currentTarget) + delta), e.currentTarget);
                 });
         },
 
         parseValue: function(value) {
-            return this.options.decimal !== null ? parseFloat(value).toFixed(this.options.decimal) : parseFloat(value);
+            return this.options.decimal !== null ? 
+                parseFloat(parseFloat(value).toFixed(this.options.decimal)) : 
+                parseFloat(value);
+        },
+
+        valueFrom: function(target = this.el) {
+            var val = this.parseValue(target.value);
+
+            if (isNaN(val)) {
+                return 0;
+            }
+
+            return val;
         },
 
         value: function() {
-            return this.parseValue(this.el.value) || 0;
+            return this.valueFrom(this.el);
         },
 
         incValue: function() {
@@ -139,8 +144,11 @@
             return -- val;
         },
 
-        setValue: function(value, el) {
+        setValueTo: function(value, el) {
             var opts = this.options;
+
+            this.$up.attr('disabled', !isNaN(opts.max) && value >= opts.max);
+            this.$down.attr('disabled', !isNaN(opts.min) && value <= opts.min);
 
             if (value < opts.min) {
                 el.value = opts.min;
@@ -175,13 +183,13 @@
         up: function() {
             var value = this.incValue();
 
-            this.setValue(value, this.el);
+            this.setValueTo(value, this.el);
         },
 
         down: function() {
             var value = this.decValue();
 
-            this.setValue(value, this.el);
+            this.setValueTo(value, this.el);
         }
 
     };
