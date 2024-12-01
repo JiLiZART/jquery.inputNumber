@@ -44,7 +44,6 @@ npm install jquery-inputnumber
 
 ```javascript
 
-import $ from 'jquery';
 import InputNumber from 'jquery-inputnumber';
 import 'jquery-inputnumber/inputNumber.css';
 

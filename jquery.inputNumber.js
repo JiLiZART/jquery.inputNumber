@@ -42,21 +42,23 @@
     };
 
     InputNumber.prototype = {
-
         el: null, // input element
         $el: null, // input element
         $wrap: null, //div wrapper element
 
         options: null,
         defaults: {
-            'negative': true,
-            'positive': true,
-            'wrapClass': 'ranged-input',
-            'inputClass': 'ranged-input__input',
-            'upClass': 'ranged-input__up',
-            'upTitle': 'Incrase',
-            'downClass': 'ranged-input__down',
-            'downTitle': 'Decrace'
+            min: -Infinity,
+            max: Infinity,
+            negative: true,
+            positive: true,
+            decimal: null,
+            wrapClass: 'ranged-input',
+            inputClass: 'ranged-input__input',
+            upClass: 'ranged-input__up',
+            upTitle: 'Incrase',
+            downClass: 'ranged-input__down',
+            downTitle: 'Decrace'
         },
 
         init: function() {
@@ -73,7 +75,7 @@
             this.bindEvents();
         },
 
-        bindEvents:function() {
+        bindEvents: function() {
             var opts = this.options,
                 $el = this.$el,
                 self = this;
@@ -90,7 +92,15 @@
 
             $el
                 .on('change', function(e) {
-                    if (e.currentTarget.value === '') e.currentTarget.value = 0;
+                    var intVal = self.parseValue(e.currentTarget.value);
+
+                    if (e.currentTarget.value === '' || isNaN(intVal)) {
+                        e.currentTarget.value = 0;
+                    }
+
+                    if (!isNaN(intVal)) {
+                        self.setValue(intVal, e.currentTarget);
+                    }
                 })
                 .on('keypress', function(e) {
                     var keyCode = window.event ? e.keyCode : e.which;
@@ -104,66 +114,81 @@
                     }
                 })
                 .bind('mousewheel', function(e, delta) {
-                    var defVal = self.defaultElValue(),
+                    var defVal = self.value(),
                         value = defVal + delta;
 
-                    if (! opts.negative) {
-                        if (value >= 0) {
-                            e.currentTarget.value = value;
-                        }
-                    } else if (! opts.positive) {
-                        if (value <= 0) {
-                            e.currentTarget.value = value;
-                        }
-                    } else {
-                        e.currentTarget.value = value;
-                    }
+                    self.setValue(self.parseValue(value), e.currentTarget);
                 });
         },
 
-        defaultElValue: function() {
-            return parseInt(this.el.value) || 0;
+        parseValue: function(value) {
+            return this.options.decimal !== null ? parseFloat(value).toFixed(this.options.decimal) : parseFloat(value);
         },
 
-        incrementElValue: function() {
-            var val = this.defaultElValue();
+        value: function() {
+            return this.parseValue(this.el.value) || 0;
+        },
+
+        incValue: function() {
+            var val = this.value();
             return ++ val;
         },
 
-        decrementElValue: function() {
-            var val = this.defaultElValue();
+        decValue: function() {
+            var val = this.value();
             return -- val;
         },
 
-        up: function() {
-            var value = this.incrementElValue();
+        setValue: function(value, el) {
+            var opts = this.options;
 
-            if (! this.options.positive) {
-                if (value <= 0) {
-                    this.el.value = value;
-                }
-            } else {
-                this.el.value = value;
+            if (value < opts.min) {
+                el.value = opts.min;
+                return;
             }
+
+            if (value > opts.max) {
+                el.value = opts.max;
+                return;
+            }
+
+            if (opts.positive && opts.negative) {
+                el.value = value;
+                return;
+            }
+
+            if (opts.positive && value < 0) {
+                el.value = 0;
+                return;
+            }
+
+            if (opts.negative && value > 0) {
+                el.value = 0;
+                return;
+            }
+
+            el.value = value;
+
+            return;
+        },
+
+        up: function() {
+            var value = this.incValue();
+
+            this.setValue(value, this.el);
         },
 
         down: function() {
-            var value = this.decrementElValue();
+            var value = this.decValue();
 
-            if (! this.options.negative) {
-                if (value >= 0) {
-                    this.el.value = value;
-                }
-            } else {
-                this.el.value = value;
-            }
+            this.setValue(value, this.el);
         }
 
     };
 
     $.fn.inputNumber = function(options) {
         return this.each(function() {
-            if (! $.data(this, 'inputNumber')) {
+            if (!$.data(this, 'inputNumber')) {
                 $.data(this, 'inputNumber', new InputNumber(this, options));
             }
         });
