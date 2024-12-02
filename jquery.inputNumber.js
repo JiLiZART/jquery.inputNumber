@@ -1,6 +1,6 @@
 /**
  * @author Nikolay Kostyurin <jilizart@gmail.com>
- * @version 0.1.3 HTML5 Like enumerable input
+ * @version 0.1.4 HTML5 Like enumerable input
  */
 
 // Uses CommonJS, AMD or browser globals to create a jQuery plugin.
